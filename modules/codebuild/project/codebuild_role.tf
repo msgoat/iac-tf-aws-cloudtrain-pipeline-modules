@@ -1,10 +1,11 @@
 locals {
-  iam_role_names = [for p in var.projects : p.name]
+  codebuild_role_name = "role-${var.region_name}-cloudtrain-codebuild"
+  codebuild_policy_name = "policy-${var.region_name}-cloudtrain-codebuild"
 }
 
-resource "aws_iam_role" "project" {
-  for_each           = toset(local.iam_role_names)
-  name               = "role-${var.region_name}-codebuild-${each.value}"
+resource "aws_iam_role" "codebuild" {
+  name               = local.codebuild_role_name
+  tags = merge({ Name : local.codebuild_role_name }, local.module_common_tags)
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -19,13 +20,14 @@ resource "aws_iam_role" "project" {
   ]
 }
 EOF
-  tags               = merge({ Name : "role-${var.region_name}-codebuild-${each.value}" }, local.module_common_tags)
 }
 
-resource "aws_iam_role_policy" "project" {
-  for_each = toset(local.iam_role_names)
-  name     = "policy-${var.region_name}-codebuild-${each.value}"
-  role     = aws_iam_role.project[each.value].name
+// TODO: split into multiple policies
+// TODO: restrict access to S3 to specific buckets
+resource "aws_iam_policy" "codebuild" {
+  name     = local.codebuild_policy_name
+  description = "Allows CodeBuild to access AWS resources related to the solution"
+  tags = merge({ Name : local.codebuild_policy_name }, local.module_common_tags)
   policy   = <<POLICY
 {
   "Version": "2012-10-17",
@@ -60,10 +62,7 @@ resource "aws_iam_role_policy" "project" {
         "s3:*"
       ],
       "Resource": [
-        "${aws_s3_bucket.cache[each.value].arn}",
-        "${aws_s3_bucket.cache[each.value].arn}/*",
-        "${aws_s3_bucket.shared.arn}",
-        "${aws_s3_bucket.shared.arn}/*"
+        "*"
       ]
     },
     {
@@ -84,8 +83,20 @@ resource "aws_iam_role_policy" "project" {
       "Resource": [
         "arn:aws:eks:eu-west-1:928593304691:cluster/eks-eu-west-1-cloudtrain-dev-cloudtrain"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sts:GetSessionToken"
+      ],
+      "Resource": "*"
     }
   ]
 }
 POLICY
+}
+
+resource aws_iam_role_policy_attachment codebuild {
+  role = aws_iam_role.codebuild.name
+  policy_arn = aws_iam_policy.codebuild.arn
 }

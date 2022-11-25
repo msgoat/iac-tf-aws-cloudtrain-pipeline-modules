@@ -36,3 +36,9 @@ variable "projects" {
     git_repo_url : string
   }))
 }
+
+variable "project_environment_variables" {
+  description = "Global project environment variables shared among all AWS CodeBuild Projects"
+  type = map(string)
+  default = {}
+}
