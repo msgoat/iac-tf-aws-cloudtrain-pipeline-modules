@@ -31,10 +31,9 @@ POLICY
   }, local.module_common_tags)
 }
 
-// TODO: specify concrete access to AWS service (S3)
 resource aws_iam_policy nexus {
   name = local.iam_policy_name
-  description = "Allow Nexus to access AWS services"
+  description = "Allow Nexus to access S3 bucket with Nexus backups"
   tags = merge({ Name : local.iam_policy_name }, local.module_common_tags)
   policy = <<POLICY
 {
@@ -42,12 +41,12 @@ resource aws_iam_policy nexus {
     "Statement": [
         {
             "Action": [
-                "ec2:DescribeAccountAttributes",
-                "ec2:DescribeAddresses",
-                "ec2:DescribeInternetGateways"
+                "s3:*"
             ],
-            "Resource": "*",
-            "Effect": "Allow"
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::s3-eu-west-1-cloudtrain-nexus-backup"
+            ]
         }
     ]
 }

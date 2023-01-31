@@ -1,4 +1,4 @@
-# iac-tf-aws-pipeline-modules
+# Terraform Modules Library iac-tf-aws-cloudtrain-pipeline-modules
 
 Collection of Terraform modules to provision CI/CD-pipelines on AWS using AWS CodeBuild etc.
 

@@ -15,5 +15,11 @@ data aws_ami default {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
+  filter {
+    name = "architecture"
+    values = [ var.ec2_ami_architecture ]
+  }
+
   most_recent = true
 }

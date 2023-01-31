@@ -39,10 +39,16 @@ variable ec2_ami_id {
   default = ""
 }
 
+variable ec2_ami_architecture {
+  description = "Architecture of the AMI the EC2 instance running the Nexus service should be based on, possible values are `x86_64` and `arm64`"
+  type = string
+  default = "arm64"
+}
+
 variable ec2_instance_type {
   description = "Instance type of the EC2 instance running the Nexus service"
   type = string
-  default = "t3.medium"
+  default = "t4g.medium"
 }
 
 variable ec2_key_pair_name {
