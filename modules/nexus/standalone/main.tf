@@ -13,5 +13,5 @@ terraform {
 
 # Local values used in this module
 locals {
-  module_common_tags = var.common_tags
+  module_common_tags = merge(var.common_tags, { TerraformModuleName = "nexus/standalone" })
 }

@@ -33,7 +33,7 @@ POLICY
 
 resource aws_iam_policy nexus {
   name = local.iam_policy_name
-  description = "Allow Nexus to access S3 bucket with Nexus backups"
+  description = "Allow Nexus to access S3 bucket with Nexus artifacts"
   tags = merge({ Name : local.iam_policy_name }, local.module_common_tags)
   policy = <<POLICY
 {
@@ -45,10 +45,15 @@ resource aws_iam_policy nexus {
             ],
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:s3:::s3-eu-west-1-cloudtrain-nexus-backup"
+                "${module.s3_bucket.s3_bucket_arn}"
             ]
         }
     ]
 }
 POLICY
+}
+
+resource aws_iam_role_policy_attachment nexus {
+  policy_arn = aws_iam_policy.nexus.arn
+  role = aws_iam_role.nexus.name
 }
