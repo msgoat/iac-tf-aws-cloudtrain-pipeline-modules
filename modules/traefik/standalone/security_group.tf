@@ -35,6 +35,18 @@ resource aws_security_group_rule traefik_ssh_in {
   to_port = 22
   protocol = "TCP"
   cidr_blocks = [ data.aws_vpc.given.cidr_block ]
+  #cidr_blocks = [ "0.0.0.0/0" ]
+  security_group_id = aws_security_group.traefik.id
+}
+
+resource aws_security_group_rule traefik_dasboard_in {
+  type = "ingress"
+  description = "Allows inbound SSH traffic from within the VPC"
+  from_port = 8080
+  to_port = 8080
+  protocol = "TCP"
+  cidr_blocks = [ data.aws_vpc.given.cidr_block ]
+  #cidr_blocks = [ "0.0.0.0/0" ]
   security_group_id = aws_security_group.traefik.id
 }
 

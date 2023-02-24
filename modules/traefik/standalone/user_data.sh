@@ -19,9 +19,9 @@ http:
       service: "nexus"
       tls:
         certResolver: letsEncrypt
-      sonarqube:
-        rule: "Host(`sonarqube.traefik.cloudtrain.aws.msgoat.eu`)"
-        service: "sonarqube"
-        tls:
-          certResolver: letsEncrypt
+    sonarqube:
+      rule: "Host(`sonarqube.traefik.cloudtrain.aws.msgoat.eu`)"
+      service: "sonarqube"
+      tls:
+        certResolver: letsEncrypt
 EOF
