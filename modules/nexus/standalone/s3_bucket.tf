@@ -6,5 +6,5 @@ module s3_bucket {
   solution_stage = var.solution_stage
   solution_fqn = var.solution_fqn
   common_tags = local.module_common_tags
-  bucket_name = "nexus-artifacts"
+  bucket_name = "nexus"
 }
