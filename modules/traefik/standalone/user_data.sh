@@ -7,21 +7,12 @@ http:
     nexus:
       loadBalancer:
         servers:
-        - url: "http://nexus:8081"
-    sonarqube:
-      loadBalancer:
-        servers:
-        - url: "http://sonarqube:9000"
+        - url: "http://10.31.1.204:8081"
 
   routers:
     nexus:
-      rule: "Host(`nexus.traefik.cloudtrain.aws.msgoat.eu`)"
+      rule: "Host(`nexus.cloudtrain.aws.msgoat.eu`)"
       service: "nexus"
-      tls:
-        certResolver: letsEncrypt
-    sonarqube:
-      rule: "Host(`sonarqube.traefik.cloudtrain.aws.msgoat.eu`)"
-      service: "sonarqube"
       tls:
         certResolver: letsEncrypt
 EOF
