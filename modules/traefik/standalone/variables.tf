@@ -48,7 +48,7 @@ variable ec2_ami_architecture {
 variable ec2_instance_type {
   description = "Instance type of the EC2 instance running the Traefik service"
   type = string
-  default = "t4g.small"
+  default = "t4g.micro"
 }
 
 variable ec2_key_pair_name {
@@ -60,4 +60,37 @@ variable root_volume_size {
   description = "Size of the Traefik root volume in GB"
   type = number
   default = 8
+}
+
+variable data_volume_size {
+  description = "Size of the Traefik data volume in GB"
+  type = number
+  default = 1
+}
+
+variable data_volume_snapshot_id {
+  description = "Optional unique identifier of a previously created final snapshot the data volume should be restored from"
+  type = string
+  default = null
+}
+
+variable final_data_volume_snapshot_enabled {
+  description = "Controls if a final snapshot should be created before the data volume is deleted; default is `true`"
+  type = bool
+  default = true
+}
+
+variable domain_name {
+  description = "Name of the super domain hosting all subdomains of the service endpoints"
+  type = string
+}
+
+variable backends {
+  description = "Definitions of backends Traefik should be forwarding to"
+  type = list(object({
+    name = string
+    ec2_instance_name = string
+    protocol = string
+    port = number
+  }))
 }

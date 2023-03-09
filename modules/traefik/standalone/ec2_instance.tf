@@ -1,6 +1,5 @@
 locals {
   ec2_instance_name = "ec2-${var.region_name}-${var.solution_fqn}-traefik"
-  ec2_user_data = "${file("user_data.sh")}"
 }
 
 resource aws_instance traefik {
