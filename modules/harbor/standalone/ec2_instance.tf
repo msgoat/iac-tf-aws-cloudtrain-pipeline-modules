@@ -21,18 +21,6 @@ resource aws_instance harbor {
       OwnedBy = local.ec2_instance_name
     }, local.module_common_tags)
   }
-  ebs_block_device {
-    device_name = "/dev/xvdb"
-    delete_on_termination = var.delete_data_volume_on_termination
-    encrypted = true
-    snapshot_id = var.data_volume_snapshot_id
-    volume_size = var.data_volume_size
-    volume_type = "gp3"
-    tags = merge({
-      Name = "vol-${var.region_name}-${var.solution_fqn}-harbor-data"
-      OwnedBy = local.ec2_instance_name
-    }, local.module_common_tags)
-  }
   subnet_id = var.ec2_subnet_id
   tags = merge({
     Name = local.ec2_instance_name

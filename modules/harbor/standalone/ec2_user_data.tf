@@ -10,73 +10,102 @@ locals {
 # ----------------------------------------------------------------------------
 set -eu
 
-export DATA_BLOCK_DEVICE=/dev/nvme1n1
 export HARBOR_HOME=/opt/harbor
 export HARBOR_BIN_HOME=$HARBOR_HOME/bin
 export HARBOR_DATA_ON_ROOT=$HARBOR_HOME/data
 export HARBOR_DATA_ON_DATA=/data/harbor
-export HARBOR_DATA_VOLUME_MARKER=$HARBOR_DATA_ON_DATA/.harbor_data_volume
+export HARBOR_DATA_VOLUME_MARKER=/data/.harbor_data_volume
+export HARBOR_ROOT_VOLUME_MARKER=$HARBOR_HOME/.harbor_root_volume
 
-echo 'check if harbor data volume is already mounted'
+mountDataVolume() {
+
+  DATA_BLOCK_DEVICE=/dev/nvme1n1
+  echo '*** Mounting harbor data volume ***'
+
+  echo "Wait for data volume to be attached"
+  while [[ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"no block device"* ]]
+  do
+    sleep 1
+  done
+
+  echo "Check if filesystem xfs is on data volume"
+  if [[ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == "xfs" ]]
+  then
+    echo "filesystem xfs is already on data volume"
+  else
+    echo "creating filesystem xfs on data volume"
+    mkfs -t xfs $DATA_BLOCK_DEVICE
+  fi
+
+  echo "mount data volume at /data"
+  mkdir /data
+  echo "UUID=$(blkid -s UUID -o value $DATA_BLOCK_DEVICE)  /data  xfs  defaults,nofail  0  2" | sudo tee /etc/fstab -a
+  mount -a
+  mount | grep '/data'
+  ls -al /data
+}
+
+reconfigureHarbor() {
+
+  echo "move harbor workdir to newly attached data volume"
+  mkdir -p $HARBOR_DATA_ON_DATA
+  if [ -e "$HARBOR_DATA_ON_ROOT" ]
+  then
+    mv $HARBOR_DATA_ON_ROOT $HARBOR_DATA_ON_DATA/
+  fi
+
+  chown -R harbor:harbor $HARBOR_DATA_ON_DATA
+  ls -al $HARBOR_DATA_ON_DATA
+
+  echo "re-configure harbor to newly attached data volume and other attached resources"
+  rm -f $HARBOR_BIN_HOME/harbor.yml
+  export HARBOR_HOST_NAME=docker.cloudtrain.aws.msgoat.eu
+  export HARBOR_EXTERNAL_URL=https://$HARBOR_HOST_NAME
+  export HARBOR_DATA_VOLUME=$HARBOR_DATA_ON_DATA
+  export HARBOR_LOG_LOCAL_LOCATION=$HARBOR_DATA_VOLUME/log/harbor
+  export HARBOR_POSTGRES_HOST=${module.postgresql.db_host_name}
+  export HARBOR_POSTGRES_PORT=${module.postgresql.db_port_number}
+  export HARBOR_POSTGRES_NAME=registry
+  export HARBOR_POSTGRES_USERNAME=${local.postgres_secret_value["postgresql-user"]}
+  export HARBOR_POSTGRES_PASSWORD='${local.postgres_secret_value["postgresql-password"]}'
+  export HARBOR_STORAGE_S3_ACCESS_KEY=${aws_iam_access_key.harbor.id}
+  export HARBOR_STORAGE_S3_SECRET_KEY='${aws_iam_access_key.harbor.secret}'
+  export HARBOR_STORAGE_S3_REGION=${var.region_name}
+  export HARBOR_STORAGE_S3_BUCKET_NAME=${module.s3_bucket.s3_bucket_name}
+  envsubst </tmp/harbor.yml >$HARBOR_BIN_HOME/harbor.yml
+  chown harbor:harbor $HARBOR_BIN_HOME/harbor.yml
+  cd $HARBOR_BIN_HOME
+  ./install.sh --with-trivy
+  chown harbor:harbor -R $HARBOR_BIN_HOME
+  chmod a+r -R $HARBOR_BIN_HOME
+}
+
+echo "Stop harbor service"
+docker compose -f $HARBOR_BIN_HOME/docker-compose.yml down -v
+
+echo "Check if harbor data volume is already mounted"
 if [ -e "$HARBOR_DATA_VOLUME_MARKER" ]
 then
   echo '*** harbor data volume already mounted ***'
-  exit 0
+else
+  mountDataVolume
+  echo "Marking data volumes as mounted"
+  echo "DO NOT DELETE OR RENAME THIS FILE\!" > $HARBOR_DATA_VOLUME_MARKER
 fi
 
-echo '*** mounting harbor data volume ***'
+echo "Check if Harbor needs reconfiguration on root volume"
+if [ -e "$HARBOR_ROOT_VOLUME_MARKER" ]
+then
+  echo '*** harbor is already configured on root volume ***'
+else
+  reconfigureHarbor
+  echo "Marking root volumes reconfigured"
+  echo "DO NOT DELETE OR RENAME THIS FILE\!" > $HARBOR_ROOT_VOLUME_MARKER
+fi
 
-echo 'stop harbor service'
-docker compose -f $HARBOR_BIN_HOME/docker-compose.yml down
-
-echo 'get info about all attached block devices'
-lsblk -f
-
-echo 'install filesystem xfs on data volume'
-file -s $DATA_BLOCK_DEVICE
-mkfs -t xfs $DATA_BLOCK_DEVICE
-file -s $DATA_BLOCK_DEVICE
-
-echo 'mount data volume at /data'
-mkdir /data
-echo "UUID=$(sudo blkid -s UUID -o value $DATA_BLOCK_DEVICE)  /data  xfs  defaults,nofail  0  2" | sudo tee /etc/fstab -a
-mount -a
-mount | grep '/data'
-ls -al /data
-
-echo "move harbor workdir to newly attached data volume"
-mkdir -p $HARBOR_DATA_ON_DATA
-mv $HARBOR_DATA_ON_ROOT $HARBOR_DATA_ON_DATA/
-chown -R harbor:harbor $HARBOR_DATA_ON_DATA
-ls -al $HARBOR_DATA_ON_DATA
-
-echo "marking data volumes as mounted"
-echo "DO NOT DELETE OR RENAME THIS FILE!" > $HARBOR_DATA_VOLUME_MARKER
-
-echo "re-configure harbor to newly attached data volume and other attached resources"
-rm -f $HARBOR_BIN_HOME/harbor.yml
-export HARBOR_HOST_NAME=docker.cloudtrain.aws.msgoat.eu
-export HARBOR_EXTERNAL_URL=https://$HARBOR_HOST_NAME
-export HARBOR_DATA_VOLUME=$HARBOR_DATA_ON_DATA
-export HARBOR_LOG_LOCAL_LOCATION=$HARBOR_DATA_VOLUME/log/harbor
-export HARBOR_POSTGRES_HOST=${module.postgresql.db_host_name}
-export HARBOR_POSTGRES_PORT=${module.postgresql.db_port_number}
-export HARBOR_POSTGRES_NAME=registry
-export HARBOR_POSTGRES_USERNAME=${local.postgres_secret_value["postgresql-user"]}
-export HARBOR_POSTGRES_PASSWORD='${local.postgres_secret_value["postgresql-password"]}'
-export HARBOR_STORAGE_S3_ACCESS_KEY=${aws_iam_access_key.harbor.id}
-export HARBOR_STORAGE_S3_SECRET_KEY='${aws_iam_access_key.harbor.secret}'
-export HARBOR_STORAGE_S3_REGION=${var.region_name}
-export HARBOR_STORAGE_S3_BUCKET_NAME=${module.s3_bucket.s3_bucket_name}
-envsubst </tmp/harbor.yml >$HARBOR_BIN_HOME/harbor.yml
-chown harbor:harbor $HARBOR_BIN_HOME/harbor.yml
-cd $HARBOR_BIN_HOME
-./install.sh --with-trivy
-chown harbor:harbor -R $HARBOR_BIN_HOME
-chmod a+r -R $HARBOR_BIN_HOME
-
-echo "start harbor service"
+echo "Start harbor service"
 docker compose -f $HARBOR_BIN_HOME/docker-compose.yml up -d
+docker compose -f $HARBOR_BIN_HOME/docker-compose.yml ps
 EOT
 }
 
