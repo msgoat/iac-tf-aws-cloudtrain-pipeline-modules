@@ -74,7 +74,7 @@ variable data_volume_snapshot_id {
   default = null
 }
 
-variable final_data_volume_snapshot_enabled {
+variable final_snapshot_enabled {
   description = "Controls if a final snapshot should be created before the data volume is deleted; default is `true`"
   type = bool
   default = true
