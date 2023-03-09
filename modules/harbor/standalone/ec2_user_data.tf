@@ -1,4 +1,5 @@
 locals {
+  postgres_secret_value = jsondecode(data.aws_secretsmanager_secret_version.postgres.secret_string)
   ec2_user_data = <<EOT
 #!/bin/bash
 # on_cloud_init.sh
@@ -49,20 +50,36 @@ mv $HARBOR_DATA_ON_ROOT $HARBOR_DATA_ON_DATA/
 chown -R harbor:harbor $HARBOR_DATA_ON_DATA
 ls -al $HARBOR_DATA_ON_DATA
 
-echo "re-configure harbor to newly attached data volume"
+echo "marking data volumes as mounted"
+echo "DO NOT DELETE OR RENAME THIS FILE!" > $HARBOR_DATA_VOLUME_MARKER
 
-echo "Setup configuration file for habor prepare"
+echo "re-configure harbor to newly attached data volume and other attached resources"
+rm -f $HARBOR_BIN_HOME/harbor.yml
 export HARBOR_HOST_NAME=docker.cloudtrain.aws.msgoat.eu
 export HARBOR_EXTERNAL_URL=https://$HARBOR_HOST_NAME
 export HARBOR_DATA_VOLUME=$HARBOR_DATA_ON_DATA
 export HARBOR_LOG_LOCAL_LOCATION=$HARBOR_DATA_VOLUME/log/harbor
+export HARBOR_POSTGRES_HOST=${module.postgresql.db_host_name}
+export HARBOR_POSTGRES_PORT=${module.postgresql.db_port_number}
+export HARBOR_POSTGRES_NAME=registry
+export HARBOR_POSTGRES_USERNAME=${local.postgres_secret_value["postgresql-user"]}
+export HARBOR_POSTGRES_PASSWORD='${local.postgres_secret_value["postgresql-password"]}'
+export HARBOR_STORAGE_S3_ACCESS_KEY=${aws_iam_access_key.harbor.id}
+export HARBOR_STORAGE_S3_SECRET_KEY='${aws_iam_access_key.harbor.secret}'
+export HARBOR_STORAGE_S3_REGION=${var.region_name}
+export HARBOR_STORAGE_S3_BUCKET_NAME=${module.s3_bucket.s3_bucket_name}
 envsubst </tmp/harbor.yml >$HARBOR_BIN_HOME/harbor.yml
 chown harbor:harbor $HARBOR_BIN_HOME/harbor.yml
-
-echo "marking data volumes as mounted"
-echo "DO NOT DELETE OR RENAME THIS FILE!" > $HARBOR_DATA_VOLUME_MARKER
+cd $HARBOR_BIN_HOME
+./install.sh --with-trivy
+chown harbor:harbor -R $HARBOR_BIN_HOME
+chmod a+r -R $HARBOR_BIN_HOME
 
 echo "start harbor service"
 docker compose -f $HARBOR_BIN_HOME/docker-compose.yml up -d
 EOT
+}
+
+data aws_secretsmanager_secret_version postgres {
+  secret_id = module.postgresql.db_secret_id
 }

@@ -9,17 +9,27 @@ resource aws_security_group harbor {
   tags = merge({ Name : local.security_group_name }, local.module_common_tags)
 }
 
-resource aws_security_group_rule nexus_http_in {
+resource aws_security_group_rule harbor_http_in {
   type = "ingress"
   description = "Allows inbound HTTP traffic from within the VPC"
-  from_port = 8081
-  to_port = 8081
+  from_port = 80
+  to_port = 80
   protocol = "TCP"
   cidr_blocks = [ data.aws_vpc.given.cidr_block ]
   security_group_id = aws_security_group.harbor.id
 }
 
-resource aws_security_group_rule nexus_ssh_in {
+resource aws_security_group_rule harbor_https_in {
+  type = "ingress"
+  description = "Allows inbound HTTPS traffic from within the VPC"
+  from_port = 443
+  to_port = 443
+  protocol = "TCP"
+  cidr_blocks = [ data.aws_vpc.given.cidr_block ]
+  security_group_id = aws_security_group.harbor.id
+}
+
+resource aws_security_group_rule harbor_ssh_in {
   type = "ingress"
   description = "Allows inbound SSH traffic from within the VPC"
   from_port = 22
@@ -29,7 +39,7 @@ resource aws_security_group_rule nexus_ssh_in {
   security_group_id = aws_security_group.harbor.id
 }
 
-resource aws_security_group_rule nexus_any_out {
+resource aws_security_group_rule harbor_any_out {
   type = "egress"
   description = "Allow any outbound traffic"
   from_port = 0

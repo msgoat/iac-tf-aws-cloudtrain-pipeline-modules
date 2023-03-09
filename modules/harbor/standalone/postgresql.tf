@@ -14,5 +14,6 @@ module "postgresql" {
   db_storage_type = "gp3"
   db_instance_class = "db.t4g.micro"
   db_min_storage_size = 20
+  generate_url_friendly_password = true
 }
 

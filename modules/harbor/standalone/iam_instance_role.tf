@@ -45,7 +45,8 @@ resource aws_iam_policy harbor {
             ],
             "Effect": "Allow",
             "Resource": [
-                "${module.s3_bucket.s3_bucket_arn}"
+                "${module.s3_bucket.s3_bucket_arn}",
+                "${module.s3_bucket.s3_bucket_arn}/*"
             ]
         }
     ]
