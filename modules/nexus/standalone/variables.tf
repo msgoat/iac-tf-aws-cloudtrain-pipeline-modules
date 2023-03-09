@@ -71,13 +71,13 @@ variable data_volume_size {
 }
 
 variable data_volume_snapshot_id {
-  description = "Optional unique identifier of an EBS snapshot which should be used to restore the Nexus data volume"
+  description = "Optional unique identifier of a previously created final snapshot the data volume should be restored from"
   type = string
-  default = ""
+  default = null
 }
 
-variable delete_data_volume_on_termination {
-  description = "Controls if the data volumes should be deleted when the EC2 instance is terminated; default false"
+variable final_snapshot_enabled {
+  description = "Controls if a final snapshot should be created before the data volume is deleted; default is `true`"
   type = bool
   default = true
 }
