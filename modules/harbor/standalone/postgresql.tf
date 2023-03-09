@@ -15,5 +15,7 @@ module "postgresql" {
   db_instance_class = "db.t4g.micro"
   db_min_storage_size = 20
   generate_url_friendly_password = true
+  final_db_snapshot_enabled = var.final_snapshot_enabled
+  db_snapshot_id = var.db_snapshot_id
 }
 

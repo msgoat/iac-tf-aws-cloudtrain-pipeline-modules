@@ -65,17 +65,24 @@ variable data_volume_size {
   default = 32
 }
 
+variable final_snapshot_enabled {
+  description = "Controls if a final snapshot should be created before the data volume and the database is deleted; default is `true`"
+  type = bool
+  default = true
+}
+
 variable data_volume_snapshot_id {
   description = "Optional unique identifier of a previously created final snapshot the data volume should be restored from"
   type = string
   default = null
 }
 
-variable final_data_volume_snapshot_enabled {
-  description = "Controls if a final snapshot should be created before the data volume is deleted; default is `true`"
-  type = bool
-  default = true
+variable db_snapshot_id {
+  description = "Optional unique identifier of a previously created final snapshot the database should be restored from"
+  type = string
+  default = null
 }
+
 
 variable db_subnet_ids {
   description = "Unique identifiers of the VPC subnets supposed to host the database of the Harbor service"

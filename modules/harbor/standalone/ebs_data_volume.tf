@@ -1,7 +1,7 @@
 resource aws_ebs_volume harbor_data {
   availability_zone = data.aws_subnet.given.availability_zone
   encrypted = true
-  final_snapshot = var.final_data_volume_snapshot_enabled
+  final_snapshot = var.final_snapshot_enabled
   snapshot_id = var.data_volume_snapshot_id
   size = var.data_volume_size
   type = "gp3"
