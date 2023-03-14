@@ -4,7 +4,7 @@ locals {
 
 resource aws_security_group harbor {
   name = local.security_group_name
-  description = "Controls access to the Nexus service"
+  description = "Controls access to the Harbor service"
   vpc_id = data.aws_subnet.given.vpc_id
   tags = merge({ Name : local.security_group_name }, local.module_common_tags)
 }

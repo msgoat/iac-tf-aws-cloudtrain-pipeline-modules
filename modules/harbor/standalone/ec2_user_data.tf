@@ -49,9 +49,9 @@ reconfigureHarbor() {
 
   echo "move harbor workdir to newly attached data volume"
   mkdir -p $HARBOR_DATA_ON_DATA
-  if [ -e "$HARBOR_DATA_ON_ROOT" ]
+  if [ ! -e "$HARBOR_DATA_ON_DATA/secret" ]
   then
-    mv $HARBOR_DATA_ON_ROOT $HARBOR_DATA_ON_DATA/
+    mv $HARBOR_DATA_ON_ROOT/* $HARBOR_DATA_ON_DATA/
   fi
 
   chown -R harbor:harbor $HARBOR_DATA_ON_DATA
