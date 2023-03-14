@@ -8,7 +8,7 @@ module "postgresql" {
   common_tags = local.module_common_tags
   postgresql_version = "14.6"
   db_instance_name = "sonarqube"
-  db_database_name = "registry"
+  db_database_name = "sonarqube"
   vpc_id = data.aws_vpc.given.id
   db_subnet_ids = var.db_subnet_ids
   db_storage_type = "gp3"
