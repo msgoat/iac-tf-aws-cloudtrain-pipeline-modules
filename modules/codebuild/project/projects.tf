@@ -1,6 +1,12 @@
 locals {
   project_names    = [for p in var.projects : p.name]
   projects_by_name = zipmap(local.project_names, var.projects)
+  project_infos = [ for p in aws_codebuild_project.projects : {
+    project_name : p.name
+    project_id : p.id
+    project_badge : p.badge_url
+    project_cache_location : p.cache[0].location
+  }]
 }
 
 resource "aws_codebuild_project" "projects" {
@@ -17,7 +23,7 @@ resource "aws_codebuild_project" "projects" {
 
   cache {
     type     = "S3"
-    location = aws_s3_bucket.cache[each.key].bucket
+    location = "${aws_s3_bucket.shared.bucket}/cache/${each.key}"
   }
 
   environment {
@@ -41,3 +47,4 @@ resource "aws_codebuild_project" "projects" {
   }
 
 }
+
