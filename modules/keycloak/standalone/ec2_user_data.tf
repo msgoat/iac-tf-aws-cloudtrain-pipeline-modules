@@ -76,6 +76,7 @@ reconfigureKeycloak() {
   echo "hostname-url=https://oidc.cloudtrain.aws.msgoat.eu" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "http-enabled=true" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "health-enabled=true" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
+  echo "proxy=edge" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   chown keycloak:keycloak $KEYCLOAK_BIN_HOME/conf/keycloak.conf
 
   echo "optimize keycloak image"
