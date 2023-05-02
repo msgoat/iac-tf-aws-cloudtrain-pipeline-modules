@@ -22,13 +22,13 @@ mountDataVolume() {
   echo '*** Mounting Nexus data volume ***'
 
   echo "Wait for data volume to be attached"
-  while [[ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"no block device"* ]]
+  while [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"not a block device"* ]
   do
     sleep 1
   done
 
   echo "Check if filesystem xfs is on data volume"
-  if [[ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == "xfs" ]]
+  if [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == "xfs" ]
   then
     echo "filesystem xfs is already on data volume"
   else
