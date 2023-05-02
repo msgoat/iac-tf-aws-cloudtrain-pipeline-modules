@@ -18,4 +18,8 @@ data aws_instance backends {
   instance_tags = {
     Name = each.value
   }
+  filter {
+    name   = "instance-state-name"
+    values = ["running"]
+  }
 }
