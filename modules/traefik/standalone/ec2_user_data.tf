@@ -22,13 +22,13 @@ mountDataVolume() {
   echo "*** Mounting traefik data volume ***"
 
   echo "Wait for data volume to become attached"
-  while [[ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"no block device"* ]]
+  while [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"not a block device"* ]
   do
     sleep 1
   done
 
   echo "Check if filesystem xfs is already present on data volume"
-  if [[ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == "xfs" ]]
+  if [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == "xfs" ]
   then
     echo "Filesystem xfs is already present on data volume"
   else
