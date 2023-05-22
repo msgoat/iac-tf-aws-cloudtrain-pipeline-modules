@@ -1,7 +1,7 @@
 locals {
   project_names    = [for p in var.projects : p.name]
   projects_by_name = zipmap(local.project_names, var.projects)
-  project_infos = [ for p in aws_codebuild_project.projects : {
+  project_infos = [for p in aws_codebuild_project.projects : {
     project_name : p.name
     project_id : p.id
     project_badge : p.badge_url
@@ -10,12 +10,13 @@ locals {
 }
 
 resource "aws_codebuild_project" "projects" {
-  for_each      = local.projects_by_name
-  name          = each.key
-  description   = each.value.description
-  service_role  = aws_iam_role.codebuild.arn
-  badge_enabled = true
-  tags          = merge({ Name : each.key }, local.module_common_tags)
+  for_each               = local.projects_by_name
+  name                   = each.key
+  description            = each.value.description
+  service_role           = aws_iam_role.codebuild.arn
+  badge_enabled          = true
+  concurrent_build_limit = 1
+  tags                   = merge({ Name : each.key }, local.module_common_tags)
 
   artifacts {
     type = "NO_ARTIFACTS"
@@ -34,7 +35,7 @@ resource "aws_codebuild_project" "projects" {
     dynamic "environment_variable" {
       for_each = var.project_environment_variables
       content {
-        name = environment_variable.key
+        name  = environment_variable.key
         value = environment_variable.value
       }
     }

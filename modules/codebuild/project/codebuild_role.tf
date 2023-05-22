@@ -1,11 +1,11 @@
 locals {
-  codebuild_role_name = "role-${var.region_name}-cloudtrain-codebuild"
+  codebuild_role_name   = "role-${var.region_name}-cloudtrain-codebuild"
   codebuild_policy_name = "policy-${var.region_name}-cloudtrain-codebuild"
 }
 
 resource "aws_iam_role" "codebuild" {
   name               = local.codebuild_role_name
-  tags = merge({ Name : local.codebuild_role_name }, local.module_common_tags)
+  tags               = merge({ Name : local.codebuild_role_name }, local.module_common_tags)
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -22,13 +22,11 @@ resource "aws_iam_role" "codebuild" {
 EOF
 }
 
-// TODO: split into multiple policies
-// TODO: restrict access to S3 to specific buckets
 resource "aws_iam_policy" "codebuild" {
-  name     = local.codebuild_policy_name
+  name        = local.codebuild_policy_name
   description = "Allows CodeBuild to access AWS resources related to the solution"
-  tags = merge({ Name : local.codebuild_policy_name }, local.module_common_tags)
-  policy   = <<POLICY
+  tags        = merge({ Name : local.codebuild_policy_name }, local.module_common_tags)
+  policy      = <<POLICY
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -81,7 +79,7 @@ resource "aws_iam_policy" "codebuild" {
         "eks:DescribeCluster"
       ],
       "Resource": [
-        "arn:aws:eks:eu-west-1:928593304691:cluster/eks-eu-west-1-cloudtrain-dev-cloudtrain"
+        "arn:aws:eks:eu-west-1:928593304691:cluster/*"
       ]
     },
     {
@@ -96,7 +94,7 @@ resource "aws_iam_policy" "codebuild" {
 POLICY
 }
 
-resource aws_iam_role_policy_attachment codebuild {
-  role = aws_iam_role.codebuild.name
+resource "aws_iam_role_policy_attachment" "codebuild" {
+  role       = aws_iam_role.codebuild.name
   policy_arn = aws_iam_policy.codebuild.arn
 }
