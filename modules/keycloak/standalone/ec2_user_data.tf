@@ -73,7 +73,9 @@ reconfigureKeycloak() {
   echo "db-url-host=$pg_endpoint_host" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "db-url-port=$pg_endpoint_port" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "db-url-database=keycloak" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
-  echo "hostname-url=https://oidc.cloudtrain.aws.msgoat.eu/auth" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
+  echo "hostname=oidc.cloudtrain.aws.msgoat.eu" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
+  echo "hostname-strict-backchannel=true" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
+  echo "hostname-admin=oidc.cloudtrain.aws.msgoat.eu" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "http-enabled=true" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "health-enabled=true" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
   echo "proxy=edge" >> $KEYCLOAK_BIN_HOME/conf/keycloak.conf
