@@ -88,6 +88,15 @@ resource "aws_iam_policy" "codebuild" {
         "sts:GetSessionToken"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameters"
+      ],
+      "Resource": [
+        "arn:aws:ssm:eu-west-1:928593304691:parameter/CLOUDTRAIN_CODEBUILD_*"
+      ]
     }
   ]
 }
