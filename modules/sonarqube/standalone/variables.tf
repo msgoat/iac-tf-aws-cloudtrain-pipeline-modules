@@ -77,12 +77,16 @@ variable data_volume_snapshot_id {
   default = null
 }
 
+variable postgresql_version {
+  description = "PostgreSQL version"
+  type = string
+}
+
 variable db_snapshot_id {
   description = "Optional unique identifier of a previously created final snapshot the database should be restored from"
   type = string
   default = null
 }
-
 
 variable db_subnet_ids {
   description = "Unique identifiers of the VPC subnets supposed to host the database of the Harbor service"
