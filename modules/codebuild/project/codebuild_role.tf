@@ -97,6 +97,13 @@ resource "aws_iam_policy" "codebuild" {
       "Resource": [
         "arn:aws:ssm:eu-west-1:928593304691:parameter/CLOUDTRAIN_CODEBUILD_*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken"
+      ],
+      "Resource": "*"
     }
   ]
 }
