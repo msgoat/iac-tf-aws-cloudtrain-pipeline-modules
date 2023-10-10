@@ -34,6 +34,7 @@ variable "projects" {
     name : string
     description : string
     git_repo_url : string
+    add_webhook = optional(bool, true)
   }))
 }
 
