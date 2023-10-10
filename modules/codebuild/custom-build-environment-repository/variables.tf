@@ -28,7 +28,7 @@ variable "common_tags" {
   type        = map(string)
 }
 
-variable "repository_name" {
-  description = "Logical name of the Docker image repository supposed to store all CBE images"
-  type        = string
+variable "repository_names" {
+  description = "Logical names of the Docker image repositories supposed to store CBE images"
+  type        = list(string)
 }

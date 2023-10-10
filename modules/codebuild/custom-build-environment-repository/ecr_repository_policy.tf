@@ -1,5 +1,6 @@
 resource "aws_ecr_repository_policy" "codebuild" {
-  repository = aws_ecr_repository.this.name
+  for_each   = aws_ecr_repository.this
+  repository = each.value.name
   policy     = data.aws_iam_policy_document.codebuild.json
 }
 
@@ -16,17 +17,17 @@ data "aws_iam_policy_document" "codebuild" {
     // resources = [aws_ecr_repository.this.arn]
 
     actions = [
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
       "ecr:BatchCheckLayerAvailability",
-      "ecr:PutImage",
-      "ecr:InitiateLayerUpload",
-      "ecr:UploadLayerPart",
+      "ecr:BatchDeleteImage",
+      "ecr:BatchGetImage",
       "ecr:CompleteLayerUpload",
       "ecr:DescribeRepositories",
+      "ecr:GetDownloadUrlForLayer",
       "ecr:GetRepositoryPolicy",
+      "ecr:InitiateLayerUpload",
       "ecr:ListImages",
-      "ecr:BatchDeleteImage",
+      "ecr:PutImage",
+      "ecr:UploadLayerPart",
     ]
   }
 }
