@@ -45,10 +45,20 @@ variable "project_environment_variables" {
 
 variable "project_parameters" {
   description = "Global project parameters managed by AWS Systems Manager Parameter store shared among most AWS CodeBuild Projects; all parameters names are expected to start with CLOUDTRAIN_CODEBUILD_"
-  type        = list(object({
-    name = string
+  type = list(object({
+    name        = string
     description = string
-    value = string
+    value       = string
   }))
-  default     = []
+  default = []
+}
+
+variable "github_token_secret_name" {
+  description = "Name of the Secret Manager secret which holds the GitHub personal access token"
+  default     = "cloudtrain-codebuild-github"
+}
+
+variable "github_token_value_name" {
+  description = "Value name of the GitHub personal access token"
+  default     = "msgoat_pat"
 }
