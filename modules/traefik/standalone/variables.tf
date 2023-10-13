@@ -94,3 +94,15 @@ variable backends {
     port = number
   }))
 }
+
+variable s3_bucket_traefik_config {
+  description = "Name of the S3 bucket containing the traefik dynamic configuration file with all backends"
+  type = string
+  default = "s3-eu-west-1-cloudtrain-codebuild-shared"
+}
+
+variable s3_object_traefik_config {
+  description = "Fully qualified path name of the S3 object containing the traefik dynamic configuration file with all backends"
+  type = string
+  default = "/pipeline/traefik/config.yaml"
+}
