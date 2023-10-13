@@ -7,7 +7,7 @@ resource aws_instance traefik {
   associate_public_ip_address = true
   ebs_optimized = true
   # hibernation = true
- # iam_instance_profile = aws_iam_instance_profile.traefik.id
+  iam_instance_profile = aws_iam_instance_profile.traefik.id
   instance_type = var.ec2_instance_type
   key_name = var.ec2_key_pair_name
   monitoring = false
