@@ -3,7 +3,7 @@ locals {
 }
 
 resource aws_instance traefik {
-  ami = var.ec2_ami_id != "" ? var.ec2_ami_id : data.aws_ami.default[0].id
+  ami = var.ec2_ami_id != "" ? var.ec2_ami_id : data.aws_ami.default.id
   associate_public_ip_address = true
   ebs_optimized = true
   # hibernation = true

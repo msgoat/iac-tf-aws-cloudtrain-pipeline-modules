@@ -36,7 +36,7 @@ variable subnet_id {
 variable ec2_ami_id {
   description = "Unique identifier of the AMI the EC2 instance running the Traefik service"
   type = string
-  default = "ami-0d6effbed616b6932" # latest arm image
+  default = ""
 }
 
 variable ec2_ami_architecture {

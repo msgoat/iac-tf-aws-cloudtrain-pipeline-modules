@@ -17,3 +17,13 @@ output traefik_backends_by_name {
   description = "Registered Traefik backends by name"
   value = local.traefik_backends_by_name
 }
+
+output ec2_ami_id {
+  description = "Unique identifier of the AMI the EC2 instance running Traefik is based on"
+  value = data.aws_ami.default.id
+}
+
+output ec2_ami_name {
+  description = "Name of the AMI the EC2 instance running Traefik is based on"
+  value = data.aws_ami.default.name
+}
