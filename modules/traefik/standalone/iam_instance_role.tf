@@ -42,15 +42,9 @@ resource aws_iam_policy traefik {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Action": [
-                "s3:Get*",
-                "s3:List*",
-                "s3:Describe*"
-            ],
             "Effect": "Allow",
-            "Resource": [
-                "${data.aws_s3_bucket.shared.arn}"
-            ]
+            "Action": [ "s3:GetObject" ],
+            "Resource": [ "${data.aws_s3_bucket.shared.arn}${aws_s3_object.traefik.key}" ]
         }
     ]
 }

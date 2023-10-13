@@ -56,26 +56,9 @@ reconfigureTraefik () {
   envsubst </tmp/traefik.tpl.yml >/tmp/traefik.yml
   mv /tmp/traefik.yml $TRAEFIK_DATA_ON_DATA/config/traefik.yml
 
-  echo "Re-generating traefik dynamic configuration"
+  echo "Copying traefik dynamic configuration from S3"
   rm -rf $TRAEFIK_DATA_ON_DATA/config/config.yml
-  cat <<'EOTPL' > $TRAEFIK_DATA_ON_DATA/config/config.yml
-http:
-  services:
-%{ for be in local.traefik_backends ~}
-    ${be.name}:
-      loadBalancer:
-        servers:
-        - url: "${be.protocol}://${be.ec2_instance_private_ip}:${be.port}"
-%{ endfor ~}
-  routers:
-%{ for be in local.traefik_backends ~}
-    ${be.name}:
-      rule: "Host(`${be.name}.${var.domain_name}`)"
-      service: "${be.name}"
-      tls:
-        certResolver: letsEncrypt
-%{ endfor ~}
-EOTPL
+  aws s3 cp s3://${var.s3_bucket_traefik_config}${var.s3_object_traefik_config} $TRAEFIK_DATA_ON_DATA/config/config.yml
   chown -R traefik:traefik $TRAEFIK_DATA_ON_DATA
   ls -al $TRAEFIK_DATA_ON_DATA
 
