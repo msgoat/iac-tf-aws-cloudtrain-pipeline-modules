@@ -30,7 +30,7 @@ resource "aws_codebuild_project" "projects" {
   environment {
     compute_type    = "BUILD_GENERAL1_SMALL"
     type            = "LINUX_CONTAINER"
-    image           = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
+    image           = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     privileged_mode = true
     dynamic "environment_variable" {
       for_each = var.project_environment_variables
