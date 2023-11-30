@@ -29,6 +29,11 @@ A changelog can be found in [changelog.md](changelog.md).
 
 ## Provided Modules
 
-| Module Name                                              | Description |
-|----------------------------------------------------------| ----------- |
-| [codebuild/project](modules/codebuild/project/README.md) | Manages AWS CodeBuild projects backed by GitHub repositories. | 
+| Module Name                                                      | Description |
+|------------------------------------------------------------------| ----------- |
+| [codebuild/project](modules/codebuild/project/README.md)         | Manages AWS CodeBuild projects backed by GitHub repositories. | 
+| [harbor/standalone](modules/harbor/standalone/README.md)         | Manages [Harbor](https://goharbor.io/) as a standalone service hosted on a single EC2 instance. | 
+| [keycloak/standalone](modules/keycloak/standalone/README.md)     | Manages [Keycloak](https://www.keycloak.org/) as a standalone service hosted on a single EC2 instance. | 
+| [nexus/standalone](modules/nexus/standalone/README.md)           | Manages [Nexus OSS](https://www.sonatype.com/products/sonatype-nexus-oss) as a standalone service hosted on a single EC2 instance. | 
+| [sonarqube/standalone](modules/sonarqube/standalone/README.md)   | Manages [SonarQube](https://www.sonarsource.com/products/sonarqube/) as a standalone service hosted on a single EC2 instance. | 
+| [traefik/standalone](modules/traefik/standalone/README.md) | Manages [Traefik](https://doc.traefik.io/traefik/) as a standalone service hosted on a single EC2 instance. | 
