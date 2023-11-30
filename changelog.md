@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.1.0] - 2023-11-30
+### Changed
+- upgraded all modules to AWS provider version 5
+- improved documentation
+- upgraded all CodeBuild projects to AWS manage build agent version 5.0 to support docker buildkit
+
 ## [1.0.0] - 2023-10-13
 ### Changed
 - added proper module versioning through git tags
