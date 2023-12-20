@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.2.0] - 2023-12-20
+### Changed
+- upgraded pipeline component modules will search for the latest AMI version now, if no AMI ID is specified
+
 ## [1.1.0] - 2023-11-30
 ### Changed
 - upgraded all modules to AWS provider version 5

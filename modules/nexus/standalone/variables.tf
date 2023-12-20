@@ -34,10 +34,15 @@ variable subnet_id {
 }
 
 variable ec2_ami_id {
-  description = "Unique identifier of the AMI the EC2 instance running the Nexus service"
+  description = "Unique identifier of the AMI the EC2 instance running the Nexus service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
   type = string
-  default = "ami-0670ec792ed269c9b" # latest x86_64 image
-#  default = "ami-089d18ab589b45134" # latest arm image
+  default = ""
+}
+
+variable ec2_ami_name_prefix {
+  description = "Prefix of the AMI name the EC2 instance running the Nexus service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
+  type = string
+  default = "CloudTrain-Nexus3-"
 }
 
 variable ec2_ami_architecture {

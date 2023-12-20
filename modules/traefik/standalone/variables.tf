@@ -34,9 +34,15 @@ variable subnet_id {
 }
 
 variable ec2_ami_id {
-  description = "Unique identifier of the AMI the EC2 instance running the Traefik service"
+  description = "Unique identifier of the AMI the EC2 instance running the Traefik service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
   type = string
   default = ""
+}
+
+variable ec2_ami_name_prefix {
+  description = "Prefix of the AMI name the EC2 instance running the Traefik service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
+  type = string
+  default = "CloudTrain-Traefik-"
 }
 
 variable ec2_ami_architecture {

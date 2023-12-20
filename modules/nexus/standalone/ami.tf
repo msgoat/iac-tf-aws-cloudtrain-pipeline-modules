@@ -3,7 +3,7 @@ data aws_ami default {
   owners = [ "928593304691" ]
   filter {
     name   = "name"
-    values = ["CloudTrain-Nexus3-*"]
+    values = ["${var.ec2_ami_name_prefix}*"]
   }
 
   filter {

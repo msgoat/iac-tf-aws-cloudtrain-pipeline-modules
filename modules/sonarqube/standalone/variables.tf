@@ -29,27 +29,34 @@ variable "common_tags" {
 }
 
 variable ec2_subnet_id {
-  description = "Unique identifier of the VPC subnet supposed to host the Harbor service"
+  description = "Unique identifier of the VPC subnet supposed to host the SonarQube service"
   type = string
 }
 
 variable ec2_ami_id {
-  description = "Unique identifier of the AMI the EC2 instance running the Harbor service"
+  description = "Unique identifier of the AMI the EC2 instance running the SonarQube service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
   type = string
+  default = ""
+}
+
+variable ec2_ami_name_prefix {
+  description = "Prefix of the AMI name the EC2 instance running the SonarQube service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
+  type = string
+  default = "CloudTrain-SonarQube-"
 }
 
 variable ec2_ami_architecture {
-  description = "Architecture of the AMI the EC2 instance running the Harbor service should be based on, possible values are `x86_64` and `arm64`"
+  description = "Architecture of the AMI the EC2 instance running the SonarQube service should be based on, possible values are `x86_64` and `arm64`"
   type = string
 }
 
 variable ec2_instance_type {
-  description = "Instance type of the EC2 instance running the Harbor service"
+  description = "Instance type of the EC2 instance running the SonarQube service"
   type = string
 }
 
 variable ec2_key_pair_name {
-  description = "Name of the SSH key pair used to access the EC2 instance running the Harbor service"
+  description = "Name of the SSH key pair used to access the EC2 instance running the SonarQube service"
   type = string
 }
 
@@ -60,7 +67,7 @@ variable root_volume_size {
 }
 
 variable data_volume_size {
-  description = "Size of the Harbor data volume in GB"
+  description = "Size of the SonarQube data volume in GB"
   type = number
   default = 32
 }
@@ -89,6 +96,6 @@ variable db_snapshot_id {
 }
 
 variable db_subnet_ids {
-  description = "Unique identifiers of the VPC subnets supposed to host the database of the Harbor service"
+  description = "Unique identifiers of the VPC subnets supposed to host the database of the SonarQube service"
   type = list(string)
 }
