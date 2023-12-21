@@ -72,7 +72,7 @@ reconfigureHarbor() {
   export HARBOR_STORAGE_S3_SECRET_KEY='${aws_iam_access_key.harbor.secret}'
   export HARBOR_STORAGE_S3_REGION=${var.region_name}
   export HARBOR_STORAGE_S3_BUCKET_NAME=${module.s3_bucket.s3_bucket_name}
-  envsubst </tmp/harbor.yml >$HARBOR_BIN_HOME/harbor.yml
+  envsubst <$HARBOR_HOME/tpl/harbor.yml >$HARBOR_BIN_HOME/harbor.yml
   chown harbor:harbor $HARBOR_BIN_HOME/harbor.yml
   cd $HARBOR_BIN_HOME
   ./install.sh --with-trivy
