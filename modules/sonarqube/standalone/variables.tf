@@ -84,11 +84,6 @@ variable data_volume_snapshot_id {
   default = null
 }
 
-variable postgresql_version {
-  description = "PostgreSQL version"
-  type = string
-}
-
 variable db_snapshot_id {
   description = "Optional unique identifier of a previously created final snapshot the database should be restored from"
   type = string

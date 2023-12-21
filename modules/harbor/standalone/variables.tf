@@ -90,7 +90,6 @@ variable db_snapshot_id {
   default = null
 }
 
-
 variable db_subnet_ids {
   description = "Unique identifiers of the VPC subnets supposed to host the database of the Harbor service"
   type = list(string)

@@ -6,7 +6,7 @@ module "postgresql" {
   solution_stage = var.solution_stage
   solution_fqn = var.solution_fqn
   common_tags = local.module_common_tags
-  postgresql_version = "14.6"
+  postgresql_version = "14.7"
   db_instance_name = "harbor"
   db_database_name = "registry"
   vpc_id = data.aws_vpc.given.id

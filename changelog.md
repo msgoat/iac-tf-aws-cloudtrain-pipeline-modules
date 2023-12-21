@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.3.0] - 2023-12-21
+### Changed
+- Upgraded PostgreSQL version to 14.7
+- Module traefik/standalone: fixed issue with dynamically retrieved AMI ID
+
 ## [1.2.0] - 2023-12-20
 ### Changed
 - upgraded pipeline component modules will search for the latest AMI version now, if no AMI ID is specified
