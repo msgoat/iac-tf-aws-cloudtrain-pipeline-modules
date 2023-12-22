@@ -18,12 +18,15 @@ export NEXUS_ROOT_VOLUME_MARKER=$SONATYPE_HOME/nexus3/.nexus_root_volume
 
 mountDataVolume() {
 
-  DATA_BLOCK_DEVICE=/dev/nvme1n1
+  DATA_BLOCK_DEVICE_NAME=nvme1n1
+  DATA_BLOCK_DEVICE=/dev/$DATA_BLOCK_DEVICE_NAME
+
   echo '*** Mounting Nexus data volume ***'
 
-  echo "Wait for data volume to be attached"
-  while [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"not a block device"* ]
+  echo "Check if data volume is attached"
+  while [ "$(lsblk -o NAME | grep $DATA_BLOCK_DEVICE_NAME)" != "$DATA_BLOCK_DEVICE_NAME" ]
   do
+    echo "Waiting for block device $DATA_BLOCK_DEVICE_NAME to be attached"
     sleep 1
   done
 
