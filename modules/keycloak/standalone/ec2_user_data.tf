@@ -17,12 +17,15 @@ export KEYCLOAK_DATA_VOLUME_MARKER=$KEYCLOAK_DATA_ON_DATA/.keycloak_data_volume
 
 mountDataVolume() {
 
-  DATA_BLOCK_DEVICE=/dev/nvme1n1
+  DATA_BLOCK_DEVICE_NAME=nvme1n1
+  DATA_BLOCK_DEVICE=/dev/$DATA_BLOCK_DEVICE_NAME
+
   echo '*** Mounting keycloak data volume ***'
 
-  echo "Wait for data volume to be attached"
-  while [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"not a block device"* ]
+  echo "Check if data volume is attached"
+  while [ "$(lsblk -o NAME | grep $DATA_BLOCK_DEVICE_NAME)" != "$DATA_BLOCK_DEVICE_NAME" ]
   do
+    echo "Waiting for block device $DATA_BLOCK_DEVICE_NAME to be attached"
     sleep 1
   done
 
@@ -102,8 +105,7 @@ echo "Reconfigure keycloak"
 reconfigureKeycloak
 
 echo "Start keycloak service"
-envsubst </tmp/keycloak.tpl.service >/tmp/keycloak.service
-mv -f /tmp/keycloak.service /etc/systemd/system/
+envsubst <$KEYCLOAK_HOME/tpl/keycloak.tpl.service >/etc/systemd/system/keycloak.service
 systemctl daemon-reload
 systemctl enable keycloak
 systemctl start keycloak
