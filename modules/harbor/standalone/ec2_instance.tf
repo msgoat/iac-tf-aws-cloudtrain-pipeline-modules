@@ -4,7 +4,7 @@ locals {
 
 resource aws_instance harbor {
   ami = var.ec2_ami_id != "" ? var.ec2_ami_id : data.aws_ami.default[0].id
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   ebs_optimized = true
   # hibernation = true
   iam_instance_profile = aws_iam_instance_profile.harbor.id
