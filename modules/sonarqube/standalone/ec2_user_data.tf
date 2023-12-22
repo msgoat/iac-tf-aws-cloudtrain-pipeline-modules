@@ -19,12 +19,15 @@ export SONARQUBE_ROOT_VOLUME_MARKER=$SONARQUBE_HOME/.sonarqube_root_volume
 
 mountDataVolume() {
 
-  DATA_BLOCK_DEVICE=/dev/nvme1n1
-  echo '*** Mounting sonarqube data volume ***'
+  DATA_BLOCK_DEVICE_NAME=nvme1n1
+  DATA_BLOCK_DEVICE=/dev/$DATA_BLOCK_DEVICE_NAME
 
-  echo "Wait for data volume to be attached"
-  while [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"not a block device"* ]
+  echo '*** Mounting SonarQube data volume ***'
+
+  echo "Check if data volume is attached"
+  while [ "$(lsblk -o NAME | grep $DATA_BLOCK_DEVICE_NAME)" != "$DATA_BLOCK_DEVICE_NAME" ]
   do
+    echo "Waiting for block device $DATA_BLOCK_DEVICE_NAME to be attached"
     sleep 1
   done
 
@@ -74,8 +77,7 @@ reconfigureSonarqube() {
   export SONARQUBE_POSTGRES_PORT=${module.postgresql.db_port_number}
   export SONARQUBE_POSTGRES_USERNAME=${local.postgres_secret_value["postgresql-user"]}
   export SONARQUBE_POSTGRES_PASSWORD='${local.postgres_secret_value["postgresql-password"]}'
-  envsubst </tmp/sonar.tpl.properties >/tmp/sonar.properties
-  mv /tmp/sonar.properties $SONARQUBE_BIN_HOME/conf/sonar.properties
+  envsubst <$SONARQUBE_BIN_HOME/tpl/sonar.tpl.properties >$SONARQUBE_BIN_HOME/conf/sonar.properties
   chown sonarqube:sonarqube $SONARQUBE_BIN_HOME/conf/sonar.properties
   chown sonarqube:sonarqube -R $SONARQUBE_DATA_ON_DATA
   chmod a+r -R $SONARQUBE_BIN_HOME
