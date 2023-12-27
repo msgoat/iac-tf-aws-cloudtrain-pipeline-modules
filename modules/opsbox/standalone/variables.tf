@@ -42,7 +42,7 @@ variable ec2_ami_id {
 variable ec2_ami_name_prefix {
   description = "Prefix of the AMI name the EC2 instance running the OpsBox service is based on; either ec2_ami_id or ec2_ami_name_prefix must be specified"
   type = string
-  default = "CloudTrain-Admin-"
+  default = "CloudTrain-OpsBox-"
 }
 
 variable ec2_ami_architecture {
