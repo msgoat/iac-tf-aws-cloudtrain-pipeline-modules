@@ -7,4 +7,5 @@ module s3_bucket {
   solution_fqn = var.solution_fqn
   common_tags = local.module_common_tags
   bucket_name = "harbor"
+  deny_unencrypted_uploads = false
 }
