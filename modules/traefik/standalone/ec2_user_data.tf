@@ -7,7 +7,7 @@ locals {
 # when the EC2 instance is booted for the first time.
 # Since all user data scripts are executed as root there's not need for sudo
 # ----------------------------------------------------------------------------
-set -eux
+set -eu
 
 export TRAEFIK_HOME=/opt/traefik
 export TRAEFIK_BIN_HOME=$TRAEFIK_HOME
@@ -18,12 +18,15 @@ export TRAEFIK_ROOT_VOLUME_MARKER=$TRAEFIK_BIN_HOME/.traefik_root_volume
 
 mountDataVolume() {
 
-  DATA_BLOCK_DEVICE=/dev/nvme1n1
-  echo "*** Mounting traefik data volume ***"
+  DATA_BLOCK_DEVICE_NAME=nvme1n1
+  DATA_BLOCK_DEVICE=/dev/$DATA_BLOCK_DEVICE_NAME
 
-  echo "Wait for data volume to become attached"
-  while [ "$(lsblk -f $DATA_BLOCK_DEVICE -o FSTYPE -n)" == *"not a block device"* ]
+  echo '*** Mounting Traefik data volume ***'
+
+  echo "Check if data volume is attached"
+  while [ "$(lsblk -o NAME | grep $DATA_BLOCK_DEVICE_NAME)" != "$DATA_BLOCK_DEVICE_NAME" ]
   do
+    echo "Waiting for block device $DATA_BLOCK_DEVICE_NAME to be attached"
     sleep 1
   done
 
@@ -53,8 +56,7 @@ reconfigureTraefik () {
   echo "Re-generating traefik static configuration"
   rm -rf $TRAEFIK_DATA_ON_DATA/config/traefik.yml
   export TRAEFIK_DATA=$TRAEFIK_DATA_ON_DATA
-  envsubst </tmp/traefik.tpl.yml >/tmp/traefik.yml
-  mv /tmp/traefik.yml $TRAEFIK_DATA_ON_DATA/config/traefik.yml
+  envsubst <$TRAEFIK_BIN_HOME/tpl/traefik.tpl.yml >$TRAEFIK_DATA_ON_DATA/config/traefik.yml
 
   echo "Copying traefik dynamic configuration from S3"
   rm -rf $TRAEFIK_DATA_ON_DATA/config/config.yml
@@ -63,8 +65,7 @@ reconfigureTraefik () {
   ls -al $TRAEFIK_DATA_ON_DATA
 
   echo "Re-generating Traefik service configuration"
-  envsubst < /tmp/traefik.tpl.service > /tmp/traefik.service
-  mv -f /tmp/traefik.service /etc/systemd/system/traefik.service
+  envsubst < $TRAEFIK_BIN_HOME/tpl/traefik.tpl.service > /etc/systemd/system/traefik.service
 }
 
 echo "Stopping Traefik service"
