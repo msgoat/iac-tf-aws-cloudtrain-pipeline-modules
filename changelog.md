@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Fixed
 
+## [1.3.1] - 2023-12-27
+### Fixed
+- Module harbor/standalone: fixed issue with s3 bucket after upgrade to current version of iac-tf-aws-cloudtrain-modules
+- Module nexus/standalone: fixed issue with s3 bucket after upgrade to current version of iac-tf-aws-cloudtrain-modules
+
 ## [1.3.0] - 2023-12-21
 ### Changed
 - Upgraded PostgreSQL version to 14.7
